@@ -1,15 +1,26 @@
+<!-- src/layouts/AuthLayout.vue -->
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-      <slot />
-    </div>
-  </div>
+  <v-app>
+    <v-main>
+      <v-container
+        fluid
+        class="d-flex align-center justify-center fill-height"
+      >
+        <v-card
+          max-width="500"
+          class="pa-6 elevation-10"
+        >
+          <slot />
+        </v-card>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
-// Este layout apenas envolve as views de autenticação
+// Layout para as views de autenticação com Vuetify
 </script>
 
 <style scoped>
-/* Podes adicionar estilos adicionais aqui */
+/* Estilos personalizados (opcional) */
 </style>
