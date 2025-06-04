@@ -1,4 +1,4 @@
-<!-- views/auth/LoginView.view -->
+<!-- src/views/auth/LoginView.vue -->
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { ref } from 'vue'
@@ -8,57 +8,40 @@ const password = ref('')
 const remember = ref(false)
 
 const login = () => {
-  console.log({ email: email.value, password: password.value, remember: remember.value })
-  // Aqui futuramente será feita a chamada à API
+    console.log({ email: email.value, password: password.value, remember: remember.value })
+    // Aqui futuramente será feita a chamada à API
 }
 </script>
 
 <template>
-  <AuthLayout>
-    <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sessão</h2>
+    <AuthLayout>
+        <v-form @submit.prevent="login" class="d-flex flex-column gap-4">
+            <v-card-title class="text-h5 text-center">Iniciar Sessão</v-card-title>
 
-    <form @submit.prevent="login" class="space-y-4">
-      <div>
-        <label for="email" class="block text-sm font-medium">Email</label>
-        <input
-          id="email"
-          v-model="email"
-          type="email"
-          required
-          class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+            <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
+                variant="outlined" />
 
-      <div>
-        <label for="password" class="block text-sm font-medium">Palavra-passe</label>
-        <input
-          id="password"
-          v-model="password"
-          type="password"
-          required
-          class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+            <v-text-field v-model="password" label="Palavra-passe" type="password" required
+                prepend-inner-icon="mdi-lock" variant="outlined" />
 
-      <div class="flex items-center justify-between">
-        <label class="flex items-center text-sm">
-          <input type="checkbox" v-model="remember" class="mr-2" />
-          Lembrar-me
-        </label>
-        <a href="#" class="text-sm text-blue-600 hover:underline">Esqueceu-se da palavra-passe?</a>
-      </div>
+            <v-row align="center" class="my-2">
+                <v-col cols="auto"> <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact" />
+                </v-col>
+                <v-col class="d-flex justify-end"> <v-btn variant="text" color="primary" size="small"
+                        class="text-capitalize" to="/forgot-password">
+                        Esqueceu-se da palavra-passe?
+                    </v-btn>
+                </v-col>
+            </v-row>
 
-      <button
-        type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-      >
-        Entrar
-      </button>
-    </form>
+            <v-btn type="submit" color="primary" block size="large" class="mt-2">
+                Entrar
+            </v-btn>
 
-    <p class="mt-6 text-sm text-center">
-      Ainda não tem conta?
-      <a href="#" class="text-blue-600 hover:underline">Criar conta</a>
-    </p>
-  </AuthLayout>
+            <div class="text-center mt-4 text-caption">
+                Ainda não tem conta?
+                <a href="#" class="text-blue text-decoration-underline">Criar conta</a>
+            </div>
+        </v-form>
+    </AuthLayout>
 </template>
