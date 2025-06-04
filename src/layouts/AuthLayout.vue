@@ -2,14 +2,20 @@
 <template>
   <v-app>
     <v-main>
-      <v-container
-        fluid
-        class="d-flex align-center justify-center fill-height"
-      >
+      <v-container fluid class="d-flex align-center justify-center fill-height">
         <v-card
-          max-width="500"
-          class="pa-6 elevation-10"
+          class="pa-6 mx-auto"
+          max-width="450"
+          elevation="10"
+          rounded="lg"
         >
+          <v-card-title
+            v-if="title"
+            class="text-h5 text-center mb-4 font-weight-medium"
+          >
+            {{ title }}
+          </v-card-title>
+
           <slot />
         </v-card>
       </v-container>
@@ -18,9 +24,15 @@
 </template>
 
 <script setup>
-// Layout para as views de autenticação com Vuetify
+defineProps({
+  title: {
+    type: String,
+    required: false,
+    default: ''
+  }
+})
 </script>
 
 <style scoped>
-/* Estilos personalizados (opcional) */
+/* Estilos opcionais para personalização futura */
 </style>
