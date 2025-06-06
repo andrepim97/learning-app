@@ -21,12 +21,12 @@ const routes = [
     component: () => import('@/views/auth/RegisterView.vue'), // Lazy-load
     meta: { requiresAuth: false }
   },
-  //   {
-  //     path: '/forgot-password',
-  //     name: 'forgot-password',
-  //     component: () => import('@/views/auth/ForgotPasswordView.vue'), // Lazy-load
-  //     meta: { requiresAuth: false }
-  //   },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/views/auth/ForgotPasswordView.vue'), // Lazy-load
+    meta: { requiresAuth: false }
+  },
   //   {
   //     path: '/dashboard',
   //     name: 'dashboard',
