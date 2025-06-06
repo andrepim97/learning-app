@@ -1,32 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '@/views/auth/LoginView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'login',
-    component: LoginView,
+    component: () => import('@/views/auth/LoginView.vue'),
     // Meta field para controlo de acesso (opcional, mas bom para planeamento)
     meta: { requiresAuth: false }
   },
-//   {
-//     path: '/register',
-//     name: 'register',
-//     component: () => import('@/views/auth/RegisterView.vue'),
-//     meta: { requiresAuth: false }
-//   },
-//   {
-//     path: '/forgot-password',
-//     name: 'forgot-password',
-//     component: () => import('@/views/auth/ForgotPasswordView.vue'), // Lazy-load
-//     meta: { requiresAuth: false }
-//   },
-//   {
-//     path: '/dashboard',
-//     name: 'dashboard',
-//     component: () => import('@/views/DashboardView.vue'),
-//     meta: { requiresAuth: true } // Esta vista requer que o utilizador esteja autenticado
-//   }
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/auth/RegisterView.vue'), // Lazy-load
+    meta: { requiresAuth: false }
+  },
+  //   {
+  //     path: '/forgot-password',
+  //     name: 'forgot-password',
+  //     component: () => import('@/views/auth/ForgotPasswordView.vue'), // Lazy-load
+  //     meta: { requiresAuth: false }
+  //   },
+  //   {
+  //     path: '/dashboard',
+  //     name: 'dashboard',
+  //     component: () => import('@/views/DashboardView.vue'),
+  //     meta: { requiresAuth: true } // Esta vista requer que o utilizador esteja autenticado
+  //   }
 ]
 
 const router = createRouter({
