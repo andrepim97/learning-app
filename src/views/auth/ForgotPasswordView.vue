@@ -52,3 +52,7 @@ const requestReset = async () => {
         </v-form>
     </AuthLayout>
 </template>
+
+<style scoped>
+/* Adicione estilos específicos para esta vista, se necessário */
+</style>

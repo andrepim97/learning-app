@@ -1,8 +1,8 @@
-<!-- src/views/auth/LoginView.vue -->
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router' // Importa useRouter para navegação
 
 const email = ref('')
 const password = ref('')
@@ -10,11 +10,15 @@ const remember = ref(false)
 const showPassword = ref(false)
 const isLoading = ref(false)
 
+const router = useRouter() // Inicializa o router
+
 const login = async () => {
     isLoading.value = true
     await new Promise(resolve => setTimeout(resolve, 1000)) // simulação
     console.log({ email: email.value, password: password.value, remember: remember.value })
     isLoading.value = false
+    // Após login bem-sucedido, redirecionar
+    // router.push({ name: 'dashboard' }) // Exemplo, quando tiver a rota dashboard
 }
 
 const emailRules = [
@@ -31,16 +35,14 @@ const passwordRules = [
 <template>
     <AuthLayout title="Iniciar Sessão">
         <v-form @submit.prevent="login" class="d-flex flex-column gap-4">
-            <v-text-field class="mb-4" v-model="email" label="Email" type="email" required
-                prepend-inner-icon="mdi-email" variant="outlined" :rules="emailRules" />
+            <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
+                variant="outlined" :rules="emailRules" />
 
-            <v-text-field class="mb-4" v-model="password" :type="showPassword ? 'text' : 'password'"
-                label="Palavra-passe" required prepend-inner-icon="mdi-lock"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Palavra-passe" required
+                prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules" />
 
-            <v-row align="center" class="my-2">
-                <v-col cols="auto">
+            <v-row align="center" class="mt-n2 mb-2"> <v-col cols="auto">
                     <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact" />
                 </v-col>
                 <v-col class="d-flex justify-end">
@@ -61,3 +63,7 @@ const passwordRules = [
         </v-form>
     </AuthLayout>
 </template>
+
+<style scoped>
+/* Se precisar de estilos específicos para a vista de login */
+</style>
