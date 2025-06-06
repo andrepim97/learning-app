@@ -2,7 +2,7 @@
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
@@ -14,17 +14,52 @@ const emailRules = [
     v => /.+@.+\..+/.test(v) || 'Email inválido'
 ]
 
+const showSnackbar = inject('showSnackbar')
+
 const requestReset = async () => {
     loading.value = true
-    console.log('Pedido de redefinição de palavra-passe para:', email.value)
-
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000)) // simulação
-        alert('Se o email estiver registado, receberá instruções para redefinir a sua palavra-passe.')
-        router.push({ name: 'login' })
+        // --- SIMULAÇÃO DA API: Inicio ---
+        await new Promise(resolve => setTimeout(resolve, 1500)) // Simula atraso de rede
+
+        if (email.value.includes('@found.com')) { // Email que "existe"
+            console.log('Pedido de redefinição simulado bem-sucedido.')
+            showSnackbar('Se o email estiver registado, receberá instruções para redefinir a sua palavra-passe.', 'success')
+            router.push({ name: 'login' })
+        } else if (email.value.includes('@notfound.com')) { // Email que "não existe"
+            throw {
+                response: {
+                    status: 404, // Ou 422, dependendo de como a API real responderá
+                    data: { message: 'Não encontramos um utilizador com esse email.' }
+                }
+            }
+        } else {
+            throw {
+                response: {
+                    status: 500,
+                    data: { message: 'Erro interno simulado ao tentar redefinir palavra-passe.' }
+                }
+            }
+        }
+        // --- SIMULAÇÃO DA API: Fim ---
+
     } catch (error) {
-        console.error('Erro ao pedir redefinição:', error)
-        alert('Ocorreu um erro ao processar o seu pedido. Por favor, tente novamente.')
+        console.error('Erro ao pedir redefinição (simulado):', error)
+        let errorMessage = 'Ocorreu um erro inesperado ao enviar o email.'
+
+        if (error.response) {
+            if (error.response.status === 422 && error.response.data.errors) {
+                const validationErrors = Object.values(error.response.data.errors).flat()
+                errorMessage = validationErrors.join(', ')
+            } else if (error.response.data.message) {
+                errorMessage = error.response.data.message
+            } else {
+                errorMessage = `Erro: ${error.response.status} - ${error.response.statusText}`;
+            }
+        } else if (error.request) {
+            errorMessage = 'Sem resposta do servidor (simulado). Verifique a sua conexão à internet.'
+        }
+        showSnackbar(errorMessage, 'error')
     } finally {
         loading.value = false
     }

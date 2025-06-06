@@ -1,7 +1,7 @@
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router' // Importa useRouter para navegação
 
 const email = ref('')
@@ -12,13 +12,75 @@ const isLoading = ref(false)
 
 const router = useRouter() // Inicializa o router
 
+const showSnackbar = inject('showSnackbar')
+
 const login = async () => {
     isLoading.value = true
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulação
-    console.log({ email: email.value, password: password.value, remember: remember.value })
-    isLoading.value = false
-    // Após login bem-sucedido, redirecionar
-    // router.push({ name: 'dashboard' }) // Exemplo, quando tiver a rota dashboard
+    try {
+        // --- SIMULAÇÃO DA API: Inicio ---
+        await new Promise(resolve => setTimeout(resolve, 1500)) // Simula atraso de rede
+
+        if (email.value === 'test@example.com' && password.value === 'password') {
+            // SIMULAÇÃO DE SUCESSO
+            console.log('Login simulado bem-sucedido.')
+            showSnackbar('Login efetuado com sucesso!', 'success')
+            router.push({ name: 'dashboard' }) // Redireciona para a dashboard
+        } else if (email.value === 'validation@error.com') {
+            // SIMULAÇÃO DE ERRO DE VALIDAÇÃO (Ex: email inválido format)
+            throw {
+                response: {
+                    status: 422,
+                    data: {
+                        errors: {
+                            email: ['O formato do email é inválido.'],
+                            password: ['A palavra-passe deve ter pelo menos 6 caracteres.']
+                        }
+                    }
+                }
+            }
+        } else if (email.value === 'invalid@credentials.com') {
+            // SIMULAÇÃO DE CREDENCIAIS INVÁLIDAS
+            throw {
+                response: {
+                    status: 401,
+                    data: { message: 'Credenciais inválidas. Verifique o seu email e palavra-passe.' }
+                }
+            }
+        }
+        else {
+            // SIMULAÇÃO DE ERRO GENÉRICO
+            throw {
+                response: {
+                    status: 500,
+                    data: { message: 'Erro interno do servidor simulado.' }
+                }
+            }
+        }
+        // --- SIMULAÇÃO DA API: Fim ---
+
+    } catch (error) {
+        // Tratamento de Erro (o mesmo da versão com Axios, mas "error" vem da simulação)
+        console.error('Erro no login (simulado):', error)
+        let errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.'
+
+        if (error.response) {
+            if (error.response.status === 422 && error.response.data.errors) {
+                const validationErrors = Object.values(error.response.data.errors).flat()
+                errorMessage = validationErrors.join(', ')
+            } else if (error.response.status === 401) {
+                errorMessage = 'Credenciais inválidas. Verifique o seu email e palavra-passe.'
+            } else if (error.response.data.message) {
+                errorMessage = error.response.data.message
+            } else {
+                errorMessage = `Erro: ${error.response.status} - ${error.response.statusText}`;
+            }
+        } else if (error.request) { // Este caso é menos provável com simulação interna, mas mantido
+            errorMessage = 'Sem resposta do servidor (simulado). Verifique a sua conexão à internet.'
+        }
+        showSnackbar(errorMessage, 'error')
+    } finally {
+        isLoading.value = false
+    }
 }
 
 const emailRules = [

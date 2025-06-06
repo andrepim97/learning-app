@@ -2,7 +2,7 @@
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 
 const name = ref('')
 const email = ref('')
@@ -11,16 +11,60 @@ const passwordConfirmation = ref('')
 const showPassword = ref(false)
 const isLoading = ref(false)
 
+const showSnackbar = inject('showSnackbar')
+
 const register = async () => {
     isLoading.value = true
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulação
-    console.log({
-        name: name.value,
-        email: email.value,
-        password: password.value,
-        password_confirmation: passwordConfirmation.value
-    })
-    isLoading.value = false
+    try {
+        // --- SIMULAÇÃO DA API: Inicio ---
+        await new Promise(resolve => setTimeout(resolve, 1500)) // Simula atraso de rede
+
+        if (email.value.includes('@success.com')) { // Use um email específico para sucesso
+            console.log('Registo simulado bem-sucedido.')
+            showSnackbar('Registo efetuado com sucesso! Pode agora iniciar sessão.', 'success')
+            router.push({ name: 'login' })
+        } else if (email.value.includes('@error.com')) { // Use um email específico para erro
+            throw {
+                response: {
+                    status: 422,
+                    data: {
+                        errors: {
+                            email: ['Este email já está registado.'],
+                            password: ['A palavra-passe é demasiado fraca.']
+                        }
+                    }
+                }
+            }
+        } else {
+            throw {
+                response: {
+                    status: 500,
+                    data: { message: 'Erro desconhecido durante o registo simulado.' }
+                }
+            }
+        }
+        // --- SIMULAÇÃO DA API: Fim ---
+
+    } catch (error) {
+        console.error('Erro no registo (simulado):', error)
+        let errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.'
+
+        if (error.response) {
+            if (error.response.status === 422 && error.response.data.errors) {
+                const validationErrors = Object.values(error.response.data.errors).flat()
+                errorMessage = validationErrors.join(', ')
+            } else if (error.response.data.message) {
+                errorMessage = error.response.data.message
+            } else {
+                errorMessage = `Erro: ${error.response.status} - ${error.response.statusText}`;
+            }
+        } else if (error.request) {
+            errorMessage = 'Sem resposta do servidor (simulado). Verifique a sua conexão à internet.'
+        }
+        showSnackbar(errorMessage, 'error')
+    } finally {
+        isLoading.value = false
+    }
 }
 
 const nameRules = [
