@@ -1,16 +1,20 @@
 <!-- src/views/auth/LoginView.vue -->
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
+import AuthButton from '@/components/auth/AuthButton.vue'
 import { ref } from 'vue'
 
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
 const showPassword = ref(false)
+const isLoading = ref(false)
 
-const login = () => {
+const login = async () => {
+    isLoading.value = true
+    await new Promise(resolve => setTimeout(resolve, 1000)) // simulação
     console.log({ email: email.value, password: password.value, remember: remember.value })
-    // Aqui futuramente será feita a chamada à API
+    isLoading.value = false
 }
 
 const emailRules = [
@@ -46,9 +50,7 @@ const passwordRules = [
                 </v-col>
             </v-row>
 
-            <v-btn type="submit" color="primary" block size="large" class="mt-2">
-                Entrar
-            </v-btn>
+            <AuthButton :loading="isLoading" text="Entrar" />
 
             <div class="text-center mt-4 text-caption">
                 Ainda não tem conta?

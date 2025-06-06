@@ -1,76 +1,54 @@
+<!-- src/views/auth/ForgotPasswordView.vue -->
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
+import AuthButton from '@/components/auth/AuthButton.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
-const loading = ref(false) 
+const loading = ref(false)
+const router = useRouter()
 
-const router = useRouter() 
 const emailRules = [
-  v => !!v || 'Email é obrigatório',
-  v => /.+@.+\..+/.test(v) || 'Email inválido'
+    v => !!v || 'Email é obrigatório',
+    v => /.+@.+\..+/.test(v) || 'Email inválido'
 ]
 
 const requestReset = async () => {
-  // Lógica para enviar o pedido de redefinição de palavra-passe
-  // (Exemplo de simulação de chamada à API)
-  loading.value = true
-  console.log('Pedido de redefinição de palavra-passe para:', email.value)
+    loading.value = true
+    console.log('Pedido de redefinição de palavra-passe para:', email.value)
 
-  try {
-    // Simular uma chamada à API
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    alert('Se o email estiver registado, receberá instruções para redefinir a sua palavra-passe.')
-    router.push({ name: 'login' }) // Redireciona para a página de login após o pedido
-  } catch (error) {
-    console.error('Erro ao pedir redefinição:', error)
-    alert('Ocorreu um erro ao processar o seu pedido. Por favor, tente novamente.')
-  } finally {
-    loading.value = false
-  }
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000)) // simulação
+        alert('Se o email estiver registado, receberá instruções para redefinir a sua palavra-passe.')
+        router.push({ name: 'login' })
+    } catch (error) {
+        console.error('Erro ao pedir redefinição:', error)
+        alert('Ocorreu um erro ao processar o seu pedido. Por favor, tente novamente.')
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
 <template>
-  <AuthLayout title="Redefinir Palavra-passe">
-    <v-form @submit.prevent="requestReset" class="d-flex flex-column gap-4">
-      <v-card-text class="text-center text-medium-emphasis">
-        Introduza o seu endereço de email e enviaremos um link para redefinir a sua palavra-passe.
-      </v-card-text>
+    <AuthLayout title="Redefinir Palavra-passe">
+        <v-form @submit.prevent="requestReset" class="d-flex flex-column gap-4">
+            <v-card-text class="text-center text-medium-emphasis">
+                Introduza o seu endereço de email e enviaremos um link para redefinir a sua palavra-passe.
+            </v-card-text>
 
-      <v-text-field
-        v-model="email"
-        label="Email"
-        type="email"
-        required
-        prepend-inner-icon="mdi-email"
-        variant="outlined"
-        :rules="emailRules"
-      />
+            <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
+                variant="outlined" :rules="emailRules" />
 
-      <v-btn
-        type="submit"
-        color="primary"
-        block
-        size="large"
-        class="mt-2"
-        :loading="loading"
-        :disabled="loading"
-      >
-        Enviar Link de Redefinição
-      </v-btn>
+            <AuthButton :loading="loading" text="Enviar Link de Redefinição" />
 
-      <div class="text-center mt-4 text-caption">
-        Lembra-se da sua palavra-passe?
-        <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/login">
-          Iniciar sessão
-        </v-btn>
-      </div>
-    </v-form>
-  </AuthLayout>
+            <div class="text-center mt-4 text-caption">
+                Lembra-se da sua palavra-passe?
+                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/login">
+                    Iniciar sessão
+                </v-btn>
+            </div>
+        </v-form>
+    </AuthLayout>
 </template>
-
-<style scoped>
-/* Adicione estilos específicos para esta vista, se necessário */
-</style>
