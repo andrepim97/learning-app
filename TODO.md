@@ -17,11 +17,6 @@
 
 ### Melhorias de UI/UX (Prioridade Média)
 
-* [ ] **Feedback Visual:**
-    * [ ] Adicionar mensagens de erro mais informativas (ex: usando `v-snackbar` do Vuetify).
-    * [ ] Exibir mensagens de sucesso (ex: "Registo efetuado com sucesso").
-* [ ] **Acessibilidade:**
-    * [ ] Garantir que os formulários são acessíveis (rótulos corretos, navegação por teclado).
 * [ ] **Animações/Transições:**
         * [ ] Adicionar animações sutis para transições de página ou ao mostrar/esconder elementos.
 

@@ -36,17 +36,22 @@ const passwordRules = [
     <AuthLayout title="Iniciar Sessão">
         <v-form @submit.prevent="login" class="d-flex flex-column gap-4">
             <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
-                variant="outlined" :rules="emailRules" />
+                variant="outlined" :rules="emailRules" autocomplete="username" />
 
             <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Palavra-passe" required
                 prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules" />
+                @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules"
+                :aria-label="showPassword ? 'Esconder palavra-passe' : 'Mostrar palavra-passe'"
+                autocomplete="current-password" />
 
-            <v-row align="center" class="mt-n2 mb-2"> <v-col cols="auto">
-                    <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact" />
+            <v-row align="center" class="mt-n2 mb-2">
+                <v-col cols="auto">
+                    <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact"
+                        aria-label="Manter sessão iniciada" />
                 </v-col>
                 <v-col class="d-flex justify-end">
-                    <v-btn variant="text" color="primary" size="small" class="text-capitalize" to="/forgot-password">
+                    <v-btn variant="text" color="primary" size="small" class="text-capitalize" to="/forgot-password"
+                        aria-label="Esqueceu-se da palavra-passe? Clique aqui para redefinir.">
                         Esqueceu-se da palavra-passe?
                     </v-btn>
                 </v-col>
@@ -56,7 +61,8 @@ const passwordRules = [
 
             <div class="text-center mt-4 text-caption">
                 Ainda não tem conta?
-                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/register">
+                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/register"
+                    aria-label="Criar conta. Clique aqui para se registar.">
                     Criar conta
                 </v-btn>
             </div>

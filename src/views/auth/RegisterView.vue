@@ -47,25 +47,54 @@ const passwordConfirmationRules = [
 <template>
     <AuthLayout title="Criar Conta">
         <v-form @submit.prevent="register" class="d-flex flex-column gap-4">
-            <v-text-field v-model="name" label="Nome" prepend-inner-icon="mdi-account" variant="outlined"
-                :rules="nameRules" />
+            <v-text-field
+                v-model="name"
+                label="Nome"
+                prepend-inner-icon="mdi-account"
+                variant="outlined"
+                :rules="nameRules"
+                autocomplete="name" />
 
-            <v-text-field v-model="email" label="Email" type="email" prepend-inner-icon="mdi-email" variant="outlined"
-                :rules="emailRules" />
+            <v-text-field
+                v-model="email"
+                label="Email"
+                type="email"
+                prepend-inner-icon="mdi-email"
+                variant="outlined"
+                :rules="emailRules"
+                autocomplete="email" />
 
-            <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Palavra-passe"
-                prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules" />
+            <v-text-field
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                label="Palavra-passe"
+                prepend-inner-icon="mdi-lock"
+                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="showPassword = !showPassword"
+                variant="outlined"
+                :rules="passwordRules"
+                :aria-label="showPassword ? 'Esconder palavra-passe' : 'Mostrar palavra-passe'" autocomplete="new-password" />
 
-            <v-text-field v-model="passwordConfirmation" :type="showPassword ? 'text' : 'password'"
-                label="Confirmar palavra-passe" prepend-inner-icon="mdi-lock-check" variant="outlined"
-                :rules="passwordConfirmationRules" />
+            <v-text-field
+                v-model="passwordConfirmation"
+                :type="showPassword ? 'text' : 'password'"
+                label="Confirmar palavra-passe"
+                prepend-inner-icon="mdi-lock-check"
+                variant="outlined"
+                :rules="passwordConfirmationRules"
+                :aria-label="showPassword ? 'Esconder confirmação de palavra-passe' : 'Mostrar confirmação de palavra-passe'" autocomplete="new-password" />
 
             <AuthButton :loading="isLoading" text="Registar" />
 
             <div class="text-center mt-4 text-caption">
                 Já tem conta?
-                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/login">
+                <v-btn
+                    variant="plain"
+                    color="blue"
+                    size="small"
+                    class="text-capitalize"
+                    to="/login"
+                    aria-label="Já tem conta? Clique aqui para iniciar sessão." >
                     Iniciar sessão
                 </v-btn>
             </div>
