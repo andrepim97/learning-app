@@ -5,23 +5,16 @@
 ### Autenticação (Prioridade Alta)
 
 * [ ] **Integrar a API de Autenticação:**
-    * [ ] Implementar chamadas à API para Login, Registo e Recuperação de Palavra-passe.
+    * [ ] Implementar chamadas à API Registo e Recuperação de Palavra-passe.
     * [ ] Lidar com respostas da API (sucesso, erros, validação do servidor).
     * [ ] Armazenar tokens de autenticação (com segurança).
 * [ ] **Implementar a Lógica de Logout.**
 * [ ] **Proteger Rotas (Navigation Guards):**
     * [ ] Usar `router.beforeEach` para verificar se o utilizador está autenticado antes de permitir o acesso a rotas protegidas.
     * [ ] Redirecionar para o Login se o utilizador não estiver autenticado.
-* [ ] **Lógica de "Lembrar-me":**
-    * [ ] Implementar a funcionalidade para persistir a sessão do utilizador (cookies, localStorage, etc.).
 
 ### Melhorias de UI/UX (Prioridade Média)
 
-* [ ] **Feedback Visual:**
-    * [ ] Adicionar mensagens de erro mais informativas (ex: usando `v-snackbar` do Vuetify).
-    * [ ] Exibir mensagens de sucesso (ex: "Registo efetuado com sucesso").
-* [ ] **Acessibilidade:**
-    * [ ] Garantir que os formulários são acessíveis (rótulos corretos, navegação por teclado).
 * [ ] **Animações/Transições:**
         * [ ] Adicionar animações sutis para transições de página ou ao mostrar/esconder elementos.
 

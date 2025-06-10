@@ -2,84 +2,79 @@
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
 import { ref, inject } from 'vue'
+<<<<<<< HEAD
 import { useRouter } from 'vue-router' // Importa useRouter para navegação
 
+=======
+import { useRouter } from 'vue-router'
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
+import { auth } from '@/plugins/firebase';
+>>>>>>> layouts
 const email = ref('')
 const password = ref('')
+
 const remember = ref(false)
 const showPassword = ref(false)
 const isLoading = ref(false)
 
-const router = useRouter() // Inicializa o router
+const router = useRouter()
+const showSnackbar = inject('showSnackbar')
 
 const showSnackbar = inject('showSnackbar')
 
 const login = async () => {
-    isLoading.value = true
-    try {
-        // --- SIMULAÇÃO DA API: Inicio ---
-        await new Promise(resolve => setTimeout(resolve, 1500)) // Simula atraso de rede
 
-        if (email.value === 'test@example.com' && password.value === 'password') {
-            // SIMULAÇÃO DE SUCESSO
-            console.log('Login simulado bem-sucedido.')
-            showSnackbar('Login efetuado com sucesso!', 'success')
-            router.push({ name: 'dashboard' }) // Redireciona para a dashboard
-        } else if (email.value === 'validation@error.com') {
-            // SIMULAÇÃO DE ERRO DE VALIDAÇÃO (Ex: email inválido format)
-            throw {
-                response: {
-                    status: 422,
-                    data: {
-                        errors: {
-                            email: ['O formato do email é inválido.'],
-                            password: ['A palavra-passe deve ter pelo menos 6 caracteres.']
-                        }
-                    }
-                }
-            }
-        } else if (email.value === 'invalid@credentials.com') {
-            // SIMULAÇÃO DE CREDENCIAIS INVÁLIDAS
-            throw {
-                response: {
-                    status: 401,
-                    data: { message: 'Credenciais inválidas. Verifique o seu email e palavra-passe.' }
-                }
-            }
+    isLoading.value = true // Ativa o estado de carregamento do botão
+    try {
+        // --- 1. Definir a persistência da sessão ANTES de fazer o login ---
+        if (remember.value) {
+            // Se "Lembrar-me" estiver marcado, usa persistência local (sessão duradoura)
+            await setPersistence(auth, browserLocalPersistence);
+        } else {
+            // Se "Lembrar-me" NÃO estiver marcado, usa persistência de sessão (sessão apenas durante a tab)
+            await setPersistence(auth, browserSessionPersistence);
         }
-        else {
-            // SIMULAÇÃO DE ERRO GENÉRICO
-            throw {
-                response: {
-                    status: 500,
-                    data: { message: 'Erro interno do servidor simulado.' }
-                }
-            }
-        }
-        // --- SIMULAÇÃO DA API: Fim ---
+
+        // --- 2. Realizar a chamada de login com o Firebase ---
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        const user = userCredential.user;
+
+        console.log('Login Firebase bem-sucedido:', user);
+        showSnackbar('Login efetuado com sucesso!', 'success');
+
+        router.push({ name: 'dashboard' }); // Redireciona para a dashboard
 
     } catch (error) {
-        // Tratamento de Erro (o mesmo da versão com Axios, mas "error" vem da simulação)
-        console.error('Erro no login (simulado):', error)
-        let errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.'
+        console.error('Erro no login Firebase:', error);
+        let errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.';
 
-        if (error.response) {
-            if (error.response.status === 422 && error.response.data.errors) {
-                const validationErrors = Object.values(error.response.data.errors).flat()
-                errorMessage = validationErrors.join(', ')
-            } else if (error.response.status === 401) {
-                errorMessage = 'Credenciais inválidas. Verifique o seu email e palavra-passe.'
-            } else if (error.response.data.message) {
-                errorMessage = error.response.data.message
-            } else {
-                errorMessage = `Erro: ${error.response.status} - ${error.response.statusText}`;
-            }
-        } else if (error.request) { // Este caso é menos provável com simulação interna, mas mantido
-            errorMessage = 'Sem resposta do servidor (simulado). Verifique a sua conexão à internet.'
+        // O seu tratamento de erros do Firebase já está bom, vou mantê-lo igual
+        switch (error.code) {
+            case 'auth/invalid-email':
+                errorMessage = 'Formato de email inválido.';
+                break;
+            case 'auth/user-disabled':
+                errorMessage = 'Esta conta foi desativada.';
+                break;
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+                errorMessage = 'Email ou palavra-passe incorretos.';
+                break;
+            case 'auth/invalid-credential':
+                errorMessage = 'Credenciais inválidas. Verifique o seu email e palavra-passe.';
+                break;
+            case 'auth/too-many-requests':
+                errorMessage = 'Demasiadas tentativas de login. Tente novamente mais tarde.';
+                break;
+            case 'auth/network-request-failed':
+                errorMessage = 'Erro de rede. Verifique a sua conexão à internet.';
+                break;
+            default:
+                errorMessage = 'Erro de autenticação: ' + error.message;
         }
-        showSnackbar(errorMessage, 'error')
+        showSnackbar(errorMessage, 'error');
     } finally {
-        isLoading.value = false
+        isLoading.value = false; // Desativa o estado de carregamento
     }
 }
 
@@ -98,17 +93,22 @@ const passwordRules = [
     <AuthLayout title="Iniciar Sessão">
         <v-form @submit.prevent="login" class="d-flex flex-column gap-4">
             <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
-                variant="outlined" :rules="emailRules" />
+                variant="outlined" :rules="emailRules" autocomplete="username" />
 
             <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Palavra-passe" required
                 prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules" />
+                @click:append-inner="showPassword = !showPassword" variant="outlined" :rules="passwordRules"
+                :aria-label="showPassword ? 'Esconder palavra-passe' : 'Mostrar palavra-passe'"
+                autocomplete="current-password" />
 
-            <v-row align="center" class="mt-n2 mb-2"> <v-col cols="auto">
-                    <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact" />
+            <v-row align="center" class="mt-n2 mb-2">
+                <v-col cols="auto">
+                    <v-checkbox v-model="remember" label="Lembrar-me" hide-details density="compact"
+                        aria-label="Manter sessão iniciada" />
                 </v-col>
                 <v-col class="d-flex justify-end">
-                    <v-btn variant="text" color="primary" size="small" class="text-capitalize" to="/forgot-password">
+                    <v-btn variant="text" color="primary" size="small" class="text-capitalize" to="/forgot-password"
+                        aria-label="Esqueceu-se da palavra-passe? Clique aqui para redefinir.">
                         Esqueceu-se da palavra-passe?
                     </v-btn>
                 </v-col>
@@ -118,7 +118,8 @@ const passwordRules = [
 
             <div class="text-center mt-4 text-caption">
                 Ainda não tem conta?
-                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/register">
+                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/register"
+                    aria-label="Criar conta. Clique aqui para se registar.">
                     Criar conta
                 </v-btn>
             </div>

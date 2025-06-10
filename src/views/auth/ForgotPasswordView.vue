@@ -74,13 +74,14 @@ const requestReset = async () => {
             </v-card-text>
 
             <v-text-field v-model="email" label="Email" type="email" required prepend-inner-icon="mdi-email"
-                variant="outlined" :rules="emailRules" />
+                variant="outlined" :rules="emailRules" autocomplete="email" />
 
             <AuthButton :loading="loading" text="Enviar Link de Redefinição" />
 
             <div class="text-center mt-4 text-caption">
                 Lembra-se da sua palavra-passe?
-                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/login">
+                <v-btn variant="plain" color="blue" size="small" class="text-capitalize" to="/login"
+                    aria-label="Lembra-se da sua palavra-passe? Clique aqui para iniciar sessão.">
                     Iniciar sessão
                 </v-btn>
             </div>
