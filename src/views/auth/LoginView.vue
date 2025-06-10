@@ -1,24 +1,73 @@
 <script setup>
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router' // Importa useRouter para navegação
-
+import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
+import { auth } from '@/plugins/firebase';
 const email = ref('')
 const password = ref('')
+
 const remember = ref(false)
 const showPassword = ref(false)
 const isLoading = ref(false)
 
-const router = useRouter() // Inicializa o router
+const router = useRouter()
+const showSnackbar = inject('showSnackbar')
 
 const login = async () => {
-    isLoading.value = true
-    await new Promise(resolve => setTimeout(resolve, 1000)) // simulação
-    console.log({ email: email.value, password: password.value, remember: remember.value })
-    isLoading.value = false
-    // Após login bem-sucedido, redirecionar
-    // router.push({ name: 'dashboard' }) // Exemplo, quando tiver a rota dashboard
+    isLoading.value = true // Ativa o estado de carregamento do botão
+    try {
+        // --- 1. Definir a persistência da sessão ANTES de fazer o login ---
+        if (remember.value) {
+            // Se "Lembrar-me" estiver marcado, usa persistência local (sessão duradoura)
+            await setPersistence(auth, browserLocalPersistence);
+        } else {
+            // Se "Lembrar-me" NÃO estiver marcado, usa persistência de sessão (sessão apenas durante a tab)
+            await setPersistence(auth, browserSessionPersistence);
+        }
+
+        // --- 2. Realizar a chamada de login com o Firebase ---
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        const user = userCredential.user;
+
+        console.log('Login Firebase bem-sucedido:', user);
+        showSnackbar('Login efetuado com sucesso!', 'success');
+
+        router.push({ name: 'dashboard' }); // Redireciona para a dashboard
+
+    } catch (error) {
+        console.error('Erro no login Firebase:', error);
+        let errorMessage = 'Ocorreu um erro inesperado. Por favor, tente novamente.';
+
+        // O seu tratamento de erros do Firebase já está bom, vou mantê-lo igual
+        switch (error.code) {
+            case 'auth/invalid-email':
+                errorMessage = 'Formato de email inválido.';
+                break;
+            case 'auth/user-disabled':
+                errorMessage = 'Esta conta foi desativada.';
+                break;
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+                errorMessage = 'Email ou palavra-passe incorretos.';
+                break;
+            case 'auth/invalid-credential':
+                errorMessage = 'Credenciais inválidas. Verifique o seu email e palavra-passe.';
+                break;
+            case 'auth/too-many-requests':
+                errorMessage = 'Demasiadas tentativas de login. Tente novamente mais tarde.';
+                break;
+            case 'auth/network-request-failed':
+                errorMessage = 'Erro de rede. Verifique a sua conexão à internet.';
+                break;
+            default:
+                errorMessage = 'Erro de autenticação: ' + error.message;
+        }
+        showSnackbar(errorMessage, 'error');
+    } finally {
+        isLoading.value = false; // Desativa o estado de carregamento
+    }
 }
 
 const emailRules = [
