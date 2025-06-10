@@ -2,14 +2,10 @@
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
 import { ref, inject } from 'vue'
-<<<<<<< HEAD
-import { useRouter } from 'vue-router' // Importa useRouter para navegação
-
-=======
 import { useRouter } from 'vue-router'
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
 import { auth } from '@/plugins/firebase';
->>>>>>> layouts
+
 const email = ref('')
 const password = ref('')
 
@@ -18,8 +14,6 @@ const showPassword = ref(false)
 const isLoading = ref(false)
 
 const router = useRouter()
-const showSnackbar = inject('showSnackbar')
-
 const showSnackbar = inject('showSnackbar')
 
 const login = async () => {
