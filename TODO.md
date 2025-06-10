@@ -5,7 +5,7 @@
 ### Autenticação (Prioridade Alta)
 
 * [ ] **Integrar a API de Autenticação:**
-    * [ ] Implementar chamadas à API Registo e Recuperação de Palavra-passe.
+    * [ ] Implementar chamadas à API Recuperação de Palavra-passe.
     * [ ] Lidar com respostas da API (sucesso, erros, validação do servidor).
     * [ ] Armazenar tokens de autenticação (com segurança).
 * [ ] **Implementar a Lógica de Logout.**
